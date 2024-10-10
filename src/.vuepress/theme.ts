@@ -4,6 +4,7 @@ import navbar from "./navbar.js";
 import sidebar from "./sidebar.js";
 
 
+
 export default hopeTheme({
   hostname: "https://vuepress-theme-hope-docs-demo.netlify.app",
 
@@ -25,6 +26,7 @@ export default hopeTheme({
 
   // 侧边栏
   sidebar : false,
+  // sidebar,
 
   // 页脚
   footer: "by pingter",

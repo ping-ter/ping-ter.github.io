@@ -6,7 +6,7 @@ title: 档案主页
 icon: home
 welcome: 👋 你好，我是
 name: pingter
-avatar: https://theme-hope-assets.vuejs.press/hero/conan.png
+avatar: ./pic.jpg
 
 titles:
   - 计算机爱好者

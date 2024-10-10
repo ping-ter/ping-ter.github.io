@@ -1,2 +1,25 @@
 // you can change config here
+$pc: 9999px;
 $theme-color: #096dd9;
+.right-anchor {
+    --rightAnchorTextColor: var(--c-text);
+    --rightAnchorFontSize: 14px;
+    /* Btn */
+    --rightAnchorBtnTextColor: var(--rightAnchorTextColor);
+    --rightAnchorBtnBgColor: var(--c-bg);
+    /* Menu */
+    --rightAnchorMenuTextColor: var(--rightAnchorTextColor);
+    --rightAnchorMenuBgColor: var(--c-bg);
+}
+
+/* dark theme */
+.dark .right-anchor {
+    --rightAnchorTextColor: var(--c-text);
+    --rightAnchorFontSize: 14px;
+    /* Btn */
+    --rightAnchorBtnTextColor: var(--rightAnchorTextColor);
+    --rightAnchorBtnBgColor: var(--c-bg);
+    /* Menu */
+    --rightAnchorMenuTextColor: var(--rightAnchorTextColor);
+    --rightAnchorMenuBgColor: var(--c-bg);
+}

@@ -10,6 +10,16 @@
 
 题目
 
-    [P1802 5倍经验日](../../exercise/luogu/P1802.md)
-    [P2946 Cow Frisbee Team S](../../exercise/luogu/P2946.md)
-    
++ [P1802 5倍经验日](../../exercise/luogu/P1802.md)
++ [P2946 Cow Frisbee Team S](../../exercise/luogu/P2946.md)
++ [难,未完成]  [P2340 Cow Exhibition G](../../exercise/luogu/P2340.md)
+
+## 完全背包
+
+每种物品有无限多个,可重复选取,解法与01背包类似
+
+题目
+
++ [P1616 疯狂的采药](../../exercise/luogu/P1616.md)
+
+
