@@ -1,11 +1,27 @@
 import os
-from bs4 import BeautifulSoup
-# idata = input("输入网址:")
+import luogu
 
+num = int(input("输入洛谷题号: "))
 
+cpp_template = """#include <iostream>
 
-soup = BeautifulSoup(html_code, 'html.parser')
-article = soup.find('article') 
-text = article.get_text()
+#define debug(x) #x << ":" << x << " "
+#define ll long long
+using namespace std;
 
-print(text)
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    
+
+    return 0;
+}
+
+"""
+
+with open(f"./luogu/codes/P{num}.cpp","w") as f:
+    f.write(cpp_template)
+    
+luogu.create_luogu_md(num,f"./luogu/P{num}.md")
