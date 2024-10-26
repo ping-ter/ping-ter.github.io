@@ -2,12 +2,10 @@
 using namespace std;
 int main()
 {
-    double m = 1.1;
-    for (int i = 0; i < 40; i++)
+    int s = 78;
+    for (int c = 1; s != 0; c *= 2, s = s >> 1)
     {
-        m = m * 1.1;
-        cout << m << " ";
+        cout << (s & 0x0001);
     }
-    cout << m;
     return 0;
 }
