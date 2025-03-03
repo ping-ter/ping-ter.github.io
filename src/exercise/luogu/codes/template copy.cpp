@@ -1,6 +1,4 @@
-#include <bits/stdc++.h>
-#define ll long long
-#define debug(x) #x << ": " << x << " "
+#include <iostream>
 
 using namespace std;
 

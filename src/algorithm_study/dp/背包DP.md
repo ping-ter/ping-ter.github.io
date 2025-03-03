@@ -13,7 +13,8 @@
 
 + [P1802 5倍经验日](../../exercise/luogu/P1802.md)
 + [P2946 Cow Frisbee Team S](../../exercise/luogu/P2946.md)
-+ [难,未完成]  [P2340 Cow Exhibition G](../../exercise/luogu/P2340.md)
++ [难,未完成(用搜索过了)]  [P2340 Cow Exhibition G](../../exercise/luogu/P2340.md)
+
 
 ## 完全背包
 

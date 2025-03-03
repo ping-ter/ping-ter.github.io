@@ -24,4 +24,8 @@ int main()
 with open(f"./luogu/codes/P{num}.cpp","w") as f:
     f.write(cpp_template)
     
-luogu.create_luogu_md(num,f"./luogu/P{num}.md")
+# luogu.create_luogu_md(num,f"./luogu/P{num}.md")
+
+
+with open(f"./luogu/P{num}.md","w") as f:
+    f.write("")

@@ -17,35 +17,16 @@ int now = 1;
 
 int main()
 {
-    // string str = "123 456 abc";
-
-    // 将字符串写入到标准输入流
-    // char str[] = ""
-    // cin.rdbuf()->pubsetbuf(str, 0x3f3f3f3f);
-    // cout << "123";
-    // ios::sync_with_stdio(false);
-    // cin.tie(nullptr);
-    // cout.tie(nullptr);
-    // cout << "123";
 
     memset(dp, ~0x3f3f3f3f, sizeof(dp));
-    // cout << "m" ;
-    // cout << dp[0][0] << "m";
+
     int N;
     cin >> N;
     for (int i = 1; i <= N; i++)
     {
         cin >> cows[i].S >> cows[i].F;
     }
-    // for (int i = 0; i < 1024; i++)
-    // {
-    //     dp[0][0][i] = 0;
-    //     dp[0][1][i] = 0;
-    // }
-    // for (int i = 0; i < 400000; i++)
-    // {
-    //     dp[0][i] = 0;
-    // }
+
     dp[0][0] = 0;
     for (int i = 1; i <= N; i++)
     {
