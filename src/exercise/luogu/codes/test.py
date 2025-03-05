@@ -46,8 +46,8 @@ def calculate_minimum_operations(a):
 
     return cnt
 
-
-while True:
+print("你好")
+while False:
     a = [random.randint(1, 9) for _ in range(n)]
 
     # print(11, end=" ")

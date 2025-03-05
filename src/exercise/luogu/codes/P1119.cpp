@@ -87,8 +87,8 @@ int main()
     cout.tie(nullptr);
     memset(ts, 0x3f3f3f3f, sizeof(int) * 200);
 #ifdef local
-    freopen("../point/P1119_2.in", "r", stdin);
-    freopen("../point/P1119_local_out.txt", "w", stdout);
+    // auto file = freopen("../point/P1119_2.in", "r", stdin);
+    // freopen("../point/P1119_local_out.txt", "w", stdout);
 #endif
 
     // string s;
@@ -107,7 +107,7 @@ int main()
         {
             cnt_t++;
             ts[cnt_t] = nodes[i].t;
-        }
+                }
     }
     int x, y, w;
     // 建图
