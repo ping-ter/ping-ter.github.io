@@ -1,4 +1,4 @@
-# 热门100题part1（1.两数之和 2.两数相加 78.子集 226.翻转二叉树 46.全排列 108.将有序数组转换为二叉搜索树）
+# 热门100题part1（1.两数之和 2.两数相加 78.子集 226.翻转二叉树 46.全排列 108.将有序数组转换为二叉搜索树  230.二叉搜索树中第 K 小的元素）
 
 ## 1.两数之和
 
@@ -218,6 +218,41 @@ public:
         root->left = inner(nums, st, mid);
         root->right = inner(nums, mid + 1, ed);
         return root;
+    }
+};
+```
+
+## 230.二叉搜索树中第 K 小的元素
+
+中根遍历就是按照元素升序遍历的
+
+```c++
+class Solution
+{
+public:
+    int n;
+    int ans;
+    int kthSmallest(TreeNode *root, int k)
+    {
+        n = k;
+        midtravel(root);
+        return ans;
+    }
+    // 中根遍历
+    void midtravel(TreeNode *root)
+    {
+        if (n == 0 || root == nullptr)
+        {
+            return;
+        }
+        midtravel(root->left);
+        n--;
+        if (n == 0)
+        {
+            ans = root->val;
+            return;
+        }
+        midtravel(root->right);
     }
 };
 ```
