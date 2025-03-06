@@ -1,4 +1,4 @@
-# 热门100题（1.两数之和 2.两数相加）
+# 热门100题（1.两数之和 2.两数相加 78.子集 226.翻转二叉树）
 
 ## 1.两数之和
 
@@ -74,3 +74,57 @@ public:
 };
 ```
 
+## 78.子集
+
+要求出幂集，也就是全组合
+
+使用位运算来模拟每种情况：第i位为1表示取nums[i]，否则不要.
+
+```c++
+class Solution
+{
+public:
+    vector<vector<int>> subsets(vector<int> &nums)
+    {
+        int size = 1 << nums.size();
+        vector<vector<int>> ans;
+
+        for (int i = 0; i < size; i++)
+        {
+            ans.push_back(vector<int>());
+            for (int m = i, j = 0; m > 0; m >>= 1, j++)
+            {
+                if (m & 1)
+                {
+                    ans[i].push_back(nums[j]);
+                }
+            }
+        }
+
+        return ans;
+    }
+};
+```
+
+## 226.翻转二叉树
+
+递归可解
+
+```c++
+class Solution
+{
+public:
+    TreeNode *invertTree(TreeNode *root)
+    {
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+        auto tmp = root->left;
+        root->left = invertTree(root->right);
+        root->right = invertTree(tmp);
+
+        return root;
+    }
+};
+```
