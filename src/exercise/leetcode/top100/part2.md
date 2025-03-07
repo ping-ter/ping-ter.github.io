@@ -1,4 +1,4 @@
-# 热门100题part2（22.括号生成）
+# 热门100题part2（22.括号生成 104.二叉树的最大深度 48.旋转图像 94.二叉树的中序遍历 238.除自身以外数组的乘积 118.杨辉三角）
 
 ## 22.括号生成
 
@@ -108,3 +108,31 @@ public:
 };
 ```
 
+## 238.除自身以外数组的乘积
+
+不能用除法，进阶要求空间O(1)，有点难想
+
+## 118.杨辉三角
+
+很简单
+
+```c++
+class Solution
+{
+public:
+    vector<vector<int>> generate(int numRows)
+    {
+        vector<vector<int>> ans(numRows, vector<int>(1, 1));
+
+        for (int i = 1; i < numRows; i++)
+        {
+            for (int j = 0; j <= i - 2; j++)
+            {
+                ans[i].push_back(ans[i - 1][j] + ans[i - 1][j + 1]);
+            }
+            ans[i].push_back(1);
+        }
+        return ans;
+    }
+};
+```
