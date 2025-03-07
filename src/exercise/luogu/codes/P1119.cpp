@@ -61,7 +61,8 @@ void dijkstra(int t_index, int st)
     }
 }
 
-void upgrade(int t_index, int st)
+// 有错误
+void upgrade_old(int t_index, int st)
 {
     // 更新，添加新的村庄
     // 前面先调用dijkstra找到st到各点最短路
@@ -80,6 +81,28 @@ void upgrade(int t_index, int st)
     }
 }
 
+void upgrade(int t_index, int st)
+{
+    // 更新，添加新的村庄
+    // 前面先调用dijkstra找到st到各点最短路
+    auto &dist_d = dist[t_index];
+    // int now_t = ts[t_index];
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            for (int k = 0; k < N; k++)
+            {
+                if (dist_d[i][j] > dist_d[k][i] + dist_d[k][j])
+                {
+                    dist_d[i][j] = dist_d[k][i] + dist_d[k][j];
+                    dist_d[j][i] = dist_d[i][j];
+                }
+            }
+        }
+    }
+}
+
 int main()
 {
     ios::sync_with_stdio(false);
@@ -87,8 +110,8 @@ int main()
     cout.tie(nullptr);
     memset(ts, 0x3f3f3f3f, sizeof(int) * 200);
 #ifdef local
-    // auto file = freopen("../point/P1119_2.in", "r", stdin);
-    // freopen("../point/P1119_local_out.txt", "w", stdout);
+    auto file = freopen("../point/P1119_2.in", "r", stdin);
+    freopen("../point/P1119_local_out.txt", "w", stdout);
 #endif
 
     // string s;
@@ -107,7 +130,7 @@ int main()
         {
             cnt_t++;
             ts[cnt_t] = nodes[i].t;
-                }
+        }
     }
     int x, y, w;
     // 建图
