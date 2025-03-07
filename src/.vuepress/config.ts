@@ -18,7 +18,7 @@ export default defineUserConfig({
     // 配置项
     appId: "36S68U5X2M",
 
-    apiKey: "6e98fffd6ddb3d495145e87b1440a656",
+    apiKey: "96c88dec63e005e325f3cbdbd96129cd",
 
     indexName: "ping-terio",
     placeholder: '搜索文档',
