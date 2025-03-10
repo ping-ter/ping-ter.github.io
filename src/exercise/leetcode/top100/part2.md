@@ -62,8 +62,59 @@ public:
 
 ## 48.旋转图像
 
-第一次想了半天没想出来
+第一次想了半天没想出来，空了一天想出来个分治的思路，然后偷看了一下评论突然发现这个就是转置加行翻转
 
+```c++
+class Solution
+{
+public:
+    // 拷打内容：
+    // void cross(vector<vector<int>> &matrix, int n, int x, int y)
+    // {
+    //     // 处理十字
+    //     for (int i = 1; i < n / 2; i++)
+    //     {
+    //         int tmp = matrix[y][x - i];
+    //         matrix[y][x - i] = matrix[y + i][x];
+    //         matrix[y + i][x] = matrix[y][x + i];
+    //         matrix[y][x + i] = matrix[y - i][x];
+    //         matrix[y - i][x] = tmp;
+    //     }
+    // }
+    // pair<int, int> tran(int y, int x)
+    // {
+
+    // }
+    void rotate(vector<vector<int>> &matrix)
+    {
+        int n = matrix.size();
+        // // 先处理10字
+        // if (n % 2 == 1)
+        // {
+        // }
+        // cross(matrix, 3, 1, 1);
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                int tmp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = tmp;
+            }
+        }
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n / 2; j++)
+            {
+                int tmp = matrix[i][j];
+                matrix[i][j] = matrix[i][n - j - 1];
+                matrix[i][n - j - 1] = tmp;
+            }
+        }
+    }
+};
+```
 
 ## 94.二叉树的中序遍历
 
@@ -111,6 +162,61 @@ public:
 ## 238.除自身以外数组的乘积
 
 不能用除法，进阶要求空间O(1)，有点难想
+
+想到一种方法是把每个ans都视为前缀x后缀，计算一遍前缀积和后缀积，然后每个都可以相乘得到答案，时间复杂度和空间复杂度都为O(n)
+
+```c++
+class Solution
+{
+public:
+    vector<int> productExceptSelf(vector<int> &nums)
+    {
+        int n = nums.size();
+        vector<int> ans = vector<int>(n, 1);
+        vector<int> pre = vector<int>(n, 1);
+        vector<int> next = vector<int>(n, 1);
+
+        for (int i = 1; i < n; i++)
+        {
+            // 计算前后缀积
+            pre[i] = pre[i - 1] * nums[i - 1];
+            next[n - i - 1] = next[n - i] * nums[n - i];
+        }
+        for (int i = 0; i < n; i++)
+        {
+            ans[i] = pre[i] * next[i];
+        }
+        return ans;
+    }
+};
+```
+
+这道题进阶条件是O(1)空间，就是不使用辅助数组
+上面的代码中，前后缀中的一个数组可以用ans，也就是要找到办法处理另一个，(实际上nums可以用，但是不知道符不符合题意),不过后缀数组每个元素实际上只用来更新和后面相乘，也就是可以只用一个变量，先相乘再更新。
+
+```c++
+class Solution
+{
+public:
+    vector<int> productExceptSelf(vector<int> &nums)
+    {
+        int n = nums.size();
+        vector<int> ans = vector<int>(n, 1);
+        int next = 1;
+        for (int i = 1; i < n; i++)
+        {
+            // 计算前缀积
+            ans[i] = ans[i - 1] * nums[i - 1];
+        }
+        for (int i = n - 2; i >= 0; i--)
+        {
+            next = next * nums[i + 1];
+            ans[i] = ans[i] * next;
+        }
+        return ans;
+    }
+};
+```
 
 ## 118.杨辉三角
 
