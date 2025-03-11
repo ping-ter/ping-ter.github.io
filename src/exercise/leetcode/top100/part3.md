@@ -1,4 +1,4 @@
-# 热门100题part3（206.反转链表 51.N皇后）
+# 热门100题part3（206.反转链表 51.N皇后 114.二叉树展开为链表 136.只出现一次的数字 761.相交链表）
 
 ## 206.反转链表
 
@@ -205,7 +205,47 @@ void tra(node* root)
 [神级遍历——morris](https://zhuanlan.zhihu.com/p/101321696)
 这种算法基于修改利用树上空孩子指针来存储要回溯的节点，感觉这里可以借鉴一下。
 
+[力扣官方题解](https://leetcode.cn/problems/flatten-binary-tree-to-linked-list/solutions/356853/er-cha-shu-zhan-kai-wei-lian-biao-by-leetcode-solu/)：
 
+```
+注意到前序遍历访问各节点的顺序是根节点、左子树、右子树。如果一个节点的左子节点为空，则该节点不需要进行展开操作。如果一个节点的左子节点不为空，则该节点的左子树中的最后一个节点被访问之后，该节点的右子节点被访问。该节点的左子树中最后一个被访问的节点是左子树中的最右边的节点，也是该节点的前驱节点。因此，问题转化成寻找当前节点的前驱节点。
+
+具体做法是，对于当前节点，如果其左子节点不为空，则在其左子树中找到最右边的节点，作为前驱节点，将当前节点的右子节点赋给前驱节点的右子节点，然后将当前节点的左子节点赋给当前节点的右子节点，并将当前节点的左子节点设为空。对当前节点处理结束后，继续处理链表中的下一个节点，直到所有节点都处理结束。
+```
+
+按照思路编写代码：
+
+```c++
+class Solution
+{
+public:
+    void flatten(TreeNode *root)
+    {
+        while (root)
+        {
+            TreeNode *l = root->left;
+            TreeNode *r = root->right;
+            if (l && r)
+            {
+                TreeNode *p = l;
+                while (p->right)
+                {
+                    p = p->right;
+                }
+                p->right = root->right;
+            }
+            if (l)
+            {
+                root->right = l;
+                root->left = nullptr;
+            }
+            root = root->right;
+        }
+    }
+};
+```
+
+学到了x_x
 
 ## 136.只出现一次的数字
 
@@ -232,4 +272,108 @@ public:
 
 不过说实话这个条件也太特殊了，感觉是对着答案出的题
 
-## 
+## 761.相交链表
+
+要求设计一个时间复杂度 O(m + n) 、仅用 O(1) 内存的解决方案。
+可以先各自遍历一遍，得到长度，然后做差就能知道是哪个了
+
+```c++
+class Solution
+{
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB)
+    {
+        int size[2] = {0, 0};
+        ListNode *head[2] = {headA, headB};
+        for (int i = 0; i < 2; i++)
+        {
+            ListNode *p = head[i];
+            while (p)
+            {
+                p = p->next;
+                size[i]++;
+            }
+        }
+        int d = size[1] - size[0];
+        int l = (d > 0);
+        d = abs(d);
+
+        for (int i = 0; i < d; i++)
+        {
+            head[l] = head[l]->next;
+        }
+        while (head[0] != head[1])
+        {
+            head[0] = head[0]->next;
+            head[1] = head[1]->next;
+        }
+        return head[0];
+    }
+};
+```
+
+通过是通过了，但是运行时间才击败了11.94%
+官方的题解是使用双指针，走到头之后切换到另一个链表的头节点，可以让两个链表都走m+n，自动同步了
+但是理论上复杂度跟我的应当是一样的
+
+```c++
+class Solution
+{
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB)
+    {
+        ListNode *head_r[2] = {headA, headB};
+        ListNode *head[2] = {headA, headB};
+        while (head[0] != head[1])
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                if (head[i] == nullptr)
+                {
+                    head[i] = head_r[1 - i];
+                }
+                else
+                {
+                    head[i] = head[i]->next;
+                }
+            }
+        }
+        return head[0];
+    }
+};
+```
+
+击败了19%，可能是使用了数组的原因吗
+
+```c++
+class Solution
+{
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB)
+    {
+        ListNode *pA = headA, *pB = headB;
+        while (pA != pB)
+        {
+            if (pA == nullptr)
+            {
+                pA = headB;
+            }
+            else
+            {
+                pA = pA->next;
+            }
+            if (pB == nullptr)
+            {
+                pB = headA;
+            }
+            else
+            {
+                pB = pB->next;
+            }
+        }
+        return pA;
+    }
+};
+```
+
+这次击败了85%，看来循环和数组会消耗一定时间。
