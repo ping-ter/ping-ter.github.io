@@ -1,4 +1,4 @@
-# 热门100题part5（208.实现 Trie (前缀树) 207.课程表 200.岛屿数量 198.打家劫舍）
+# 热门100题part5（208.实现 Trie (前缀树) 207.课程表 200.岛屿数量 198.打家劫舍 169.多数元素）
 
 ## 208.实现 Trie (前缀树)
 
@@ -274,3 +274,87 @@ public:
 查看了一下题解，大体思路基本相同。
 
 ## 198.打家劫舍
+
+一眼动态规划，如果打劫i，那么最大能得到nums[i]加上i-2之前的最大值，不拿可以获得i-1之前的最大值
+
+```c++
+class Solution
+{
+    int dp[128];
+
+public:
+    int rob(vector<int> &nums)
+    {
+        dp[0] = 0;
+        dp[1] = nums[0];
+        int n = nums.size();
+        for (int i = 2; i <= n; i++)
+        {
+            dp[i] = max(dp[i - 2] + nums[i - 1], dp[i - 1]);
+        }
+        return dp[n];
+    }
+};
+```
+
+其实空间可以优化一下，实际上只用到了`i - 1`和`i - 2`，根本不需要使用数组来储存。
+
+## 169.多数元素
+
+
+进阶要求是尝试设计时间复杂度为 O(n)、空间复杂度为 O(1) 的算法解决此问题，但是没要求不能修改数组，因此可以使用分划来解决。使用三路分划，由于出现次数大于n/2，所以一定出现在三路中较大的部分。随机选择有一半的概率直接选出来。
+
+```c++
+class Solution
+{
+    int n_2;
+    int partition(vector<int> &nums, int l, int r)
+    {
+        while (l < r)
+        {
+            int pivot = rand() % (r - l + 1) + l;
+            swap(nums[pivot], nums[l]);
+            int v = nums[l];
+            int gt = r + 1;
+            int lt = l;
+            int i = l + 1;
+            while (i < gt)
+            {
+                if (nums[i] < v)
+                {
+                    swap(nums[i], nums[lt]);
+                    lt++;
+                    i++;
+                }
+                else if (nums[i] > v)
+                {
+                    gt--;
+                    swap(nums[i], nums[gt]);
+                }
+                else
+                {
+                    i++;
+                }
+            }
+
+            if (r - i + 1 > n_2)
+            {
+                return partition(nums, i, r);
+            }
+            if (i - lt > n_2)
+            {
+                return nums[lt];
+            }
+            r = lt - 1;
+        }
+        return nums[l];
+    }
+
+public:
+    int majorityElement(vector<int> &nums)
+    {
+        n_2 = nums.size() / 2;
+        return partition(nums, 0, nums.size() - 1);
+    }
+};
+```
