@@ -1,4 +1,4 @@
-# 热门100题part4（）
+# 热门100题part4（236.二叉树的最近公共祖先 234.回文链表 739.每日温度 221.最大正方形 215.数组中的第K个最大元素）
 
 ## 236.二叉树的最近公共祖先
 
@@ -222,3 +222,72 @@ Your runtime beats 99.86 % of cpp submissions
 Your memory usage beats 80.79 % of cpp submissions (101.3 MB)
 ```
 
+## 221.最大正方形
+
+## 215.数组中的第K个最大元素
+
+要求$O(n)$时间，也就是不能排序，因为排序至少$O(nlog(n))$，同样的，也不能使用优先队列$O(nlog(k))$,这里也有所争议，因为大根堆$O(n+klogn)$，小根堆$O(k+nlogk)$，如果k和n数量级相差很大可以使用小根堆。
+
+这是个经典的Top-K问题，典型解法是使用快排中的分划操作(partition)，快速选择算法最坏的复杂度为$O(n)$，但是有相关证明，随机化快速选择算法的期望时间复杂度为$O(n)$
+
+复习下三路分划：将数据划分成小于v，等于v，大于v，分别置于左中右
+
+[史上最清晰的三路快速排序，你 Get 到了吗？](https://zhuanlan.zhihu.com/p/357002752)
+
+AC代码
+
+```c++
+class Solution
+{
+public:
+    int partition(vector<int> &nums, int k, int l, int r)
+    {
+        if (r == l)
+        {
+            return nums[l];
+        }
+        // 随机选择
+        int pivot = rand() % (r - l + 1) + l;
+        swap(nums[l], nums[pivot]);
+        int lt = l;
+        int gt = r + 1;
+        int i = l + 1;
+        int v = nums[lt];
+        while (i < gt)
+        {
+            if (nums[i] < v)
+            {
+                swap(nums[i], nums[lt]);
+                lt++;
+                i++;
+            }
+            else if (nums[i] > v)
+            {
+                gt--;
+                swap(nums[gt], nums[i]);
+            }
+            else
+            {
+                i++;
+            }
+        }
+        if (k <= r - gt + 1)
+        {
+            return partition(nums, k, gt, r);
+        }
+        if (k <= r - lt + 1)
+        {
+            return v;
+        }
+        else
+        {
+            return partition(nums, k - (r - lt + 1), l, lt - 1);
+        }
+    }
+    int findKthLargest(vector<int> &nums, int k)
+    {
+        srand(0);
+        return partition(nums, k, 0, nums.size() - 1);
+    }
+};
+```
