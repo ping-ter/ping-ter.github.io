@@ -224,6 +224,53 @@ Your memory usage beats 80.79 % of cpp submissions (101.3 MB)
 
 ## 221.最大正方形
 
+可以画图分析
+
+![Alt text](image.png)
+
+如果$(i,j)$是$n*n$正方形的右下角，那他左边，上边和左上都应该是$(n-1)*(n-1)$，所以可以使用动态规划解决。左侧边和右侧边一定不会成为大正方形右上角，可以单独处理，这样动态规划的时候就不必考虑边界。
+```c++
+class Solution
+{
+public:
+    int maximalSquare(vector<vector<char>> &matrix)
+    {
+        int m = matrix.size();
+        int n = matrix[0].size();
+        // 省下空间
+        auto dp = vector<vector<int>>(m + 1, vector<int>(n + 1, 0));
+        // auto &dp = matrix;
+        int maxc = 0;
+        // for (int i = 0; i < m; i++)
+        // {
+        //     matrix[i][0] = matrix[i][0] - '0';
+        //     maxc = max(maxc, int(dp[i][0]));
+        // }
+        // for (int j = 1; j < n; j++)
+        // {
+        //     matrix[0][j] = matrix[0][j] - '0';
+        //     maxc = max(maxc, int(dp[0][j]));
+        // }
+        for (int i = 1; i <= m; i++)
+        {
+            for (int j = 1; j <= n; j++)
+            {
+                if (matrix[i - 1][j - 1] == '1')
+                {
+                    dp[i][j] = min({dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]}) + 1;
+                    maxc = max(maxc, int(dp[i][j]));
+                }
+                else
+                {
+                    dp[i][j] = 0;
+                }
+            }
+        }
+        return maxc * maxc;
+    }
+};
+```
+
 ## 215.数组中的第K个最大元素
 
 要求$O(n)$时间，也就是不能排序，因为排序至少$O(nlog(n))$，同样的，也不能使用优先队列$O(nlog(k))$,这里也有所争议，因为大根堆$O(n+klogn)$，小根堆$O(k+nlogk)$，如果k和n数量级相差很大可以使用小根堆。

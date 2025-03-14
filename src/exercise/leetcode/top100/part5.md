@@ -358,3 +358,6 @@ public:
     }
 };
 ```
+
+但是这题官方思路还挺多的
+[官方题解](https://leetcode.cn/problems/majority-element/solutions/146074/duo-shu-yuan-su-by-leetcode-solution)
