@@ -2,6 +2,7 @@
 date: 2024-10-01
 title: Bar 功能
 icon: lightbulb
+article: false
 ---
 
 ## 介绍

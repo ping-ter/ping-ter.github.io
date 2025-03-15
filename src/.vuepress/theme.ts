@@ -12,10 +12,10 @@ export default hopeTheme({
     name: "pingter",
     url: "https://mister-hope.com",
   },
-
+  
   iconAssets: "fontawesome-with-brands",
 
-  logo: "https://theme-hope-assets.vuejs.press/logo.svg",
+  logo: "hero.jpg",
 
   // repo: "vuepress-theme-hope/vuepress-theme-hope",
   repo: "https://github.com/ping-ter",
@@ -64,6 +64,8 @@ export default hopeTheme({
       components: ["Badge", "VPCard"],
     },
 
+    // 启用博客
+    blog: true,
     // 此处开启了很多功能用于演示，你应仅保留用到的功能。
     markdownImage: {
       figure: true,

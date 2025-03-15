@@ -2,16 +2,16 @@
 date: 2024-10-01
 home: true
 portfolio: true
+heroFullScreen: true
 title: 档案主页
 icon: home
 welcome: 👋 你好，我是
 name: pingter
-avatar: ./pic.jpg
-
+avatar: pic.jpg
+layout: BlogHome
 titles:
   - 计算机爱好者
-#   - 小兰的青梅竹马
-#   - 黑衣组织的最大对手
+  - 技术宅
 
 footer: false
 ---
