@@ -15,6 +15,3 @@ titles:
 heroImage: hero.jpg
 footer: false
 ---
-
-## 介绍
-
