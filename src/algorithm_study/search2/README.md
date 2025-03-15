@@ -1,3 +1,7 @@
+---
+date: 2024-10-31
+---
+
 # 搜索
 
 [洛谷搜索讲解](https://www.luogu.com/article/epbwoucr)

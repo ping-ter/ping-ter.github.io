@@ -1,3 +1,7 @@
+---
+date: 2024-09-28
+---
+
 # 进阶DP
 
 [题单](https://www.luogu.com.cn/training/1435)
