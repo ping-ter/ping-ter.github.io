@@ -1,7 +1,7 @@
 ---
 date: 2025-03-14
 ---
-# 热门100题part6（）
+# 热门100题part6（155.最小栈 152.乘积最大子数组 148.排序链表 146.LRU 缓存 141.环形链表 142.环形链表 II）
 
 ## 155.最小栈
 
@@ -163,4 +163,132 @@ Your memory usage beats 5.06 % of cpp submissions (84.5 MB)
 
 ## 146.LRU 缓存
 
-`get`和`put`必须以$O(1)$的平均时间复杂度运行
+`get`和`put`必须以$O(1)$的平均时间复杂度运行，但是没限制空间，显然这题是空间换时间。$O(1)$查询就必须使用哈希表。而$O(1)$更新和寻找最久未使用的关键字，可以维护一个链表，每次使用新的关键字时，移动到尾部，表头始终为最近最少使用的，由于需要在链表中定位，所以需要在哈希表中存储链表节点，而移动操作需要前后的节点，所以应该是双向链表。
+
+```c++
+class LRUCache
+{
+    struct node
+    {
+        node *pre;
+        node *next;
+        int value;
+        int key;
+        node(int key, int value) : key(key), value(value), pre(nullptr), next(nullptr) {}
+    };
+    node *head;
+    node *tail;
+    int size;
+    int cnt;
+    unordered_map<int, node *> keymap;
+    inline void push_back(node *p)
+    {
+        tail->next = p;
+        p->pre = tail;
+        tail = tail->next;
+    }
+    inline void move_back(node *p)
+    {
+        if (p == tail)
+        {
+            return;
+        }
+        node *pre = p->pre;
+        node *next = p->next;
+        pre->next = next;
+        next->pre = pre;
+        p->next = nullptr;
+        push_back(p);
+    }
+
+public:
+    LRUCache(int capacity)
+    {
+        size = capacity;
+        cnt = 0;
+        head = new node(0, 0);
+        tail = head;
+    }
+
+    int get(int key)
+    {
+        auto it = keymap.find(key);
+        if (it == keymap.end())
+        {
+            return -1;
+        }
+        move_back(it->second);
+        return it->second->value;
+    }
+
+    void put(int key, int value)
+    {
+        auto it = keymap.find(key);
+        node *nownode;
+        if (it == keymap.end())
+        {
+            nownode = new node(key, value);
+            keymap.insert(make_pair(key, nownode));
+            cnt++;
+            push_back(nownode);
+            if (cnt > size)
+            {
+                node *p = head->next;
+                head->next = p->next;
+                head->next->pre = head;
+                keymap.erase(p->key);
+                delete p;
+            }
+        }
+        else
+        {
+            nownode = (*it).second;
+            nownode->value = value;
+            move_back(nownode);
+        }
+    }
+};
+```
+
+## 141.环形链表
+
+进阶要求$O(1)$空间，也就是不能用数组或者哈希表来存，那么可以使用快慢指针，如果两个指针相遇，证明有环，如果快指针能走完，证明没有环。
+
+```c++
+class Solution
+{
+public:
+    bool hasCycle(ListNode *head)
+    {
+        if (head == nullptr || head->next == nullptr)
+        {
+            return false;
+        }
+        ListNode *p1 = head;
+        ListNode *p2 = head->next;
+        while (p2 && p1 != p2)
+        {
+            p1 = p1->next;
+            p2 = p2->next;
+            if (p2)
+            {
+                p2 = p2->next;
+            }
+        }
+        if (p2 == nullptr)
+        {
+            return false;
+        }
+        return true;
+    }
+};
+```
+
+## 142.环形链表 II
+
+在上一题的基础上，需要找出尾部连接的点，同时，本题不允许修改链表。$O(1)$空间的限制其实对上题没什么影响，对这题则是很大限制了思路
+
+偷看评论区发现可以在相遇后再使用双指针来确定
+[参考评论](https://leetcode.cn/problems/linked-list-cycle-ii/description/comments/2982279/)
+
+首先，快慢指针相遇时，一定满足快指针走的跳数是慢指针两倍
