@@ -3,7 +3,7 @@ date: 2024-10-01
 home: true
 portfolio: true
 heroFullScreen: true
-title: 档案主页
+title: 主页
 icon: home
 welcome: 👋 你好，我是
 name: pingter
