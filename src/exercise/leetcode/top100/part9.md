@@ -55,6 +55,42 @@ public:
 ```
 
 先试了个DFS，超时了，$2^{100}$确实量级挺大的，而且遇到了无法剪枝的用例，
+考虑这题能不能动态规划
+前面提到，**这题就是在找和为S/2的子集**，因此可以转化成求目标和的动态规划问题，这题不需要记录次数，只要真假即可。
+```c++
+class Solution
+{
+    bool dp[20050];
+
+public:
+    bool canPartition(vector<int> &nums)
+    {
+        int n = nums.size();
+        int sum = 0;
+        for (const int &i : nums)
+        {
+            sum += i;
+        }
+        if (sum % 2 == 1)
+        {
+            return false;
+        }
+        int target = sum / 2;
+        fill(dp, dp + target, false);
+        dp[0] = true;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = target; j >= nums[i]; j--)
+            {
+                dp[j] = dp[j] || dp[j - nums[i]];
+            }
+        }
+        return dp[target];
+    }
+};
+```
+
+成功AC，注意必须倒着遍历j，否则会出现重复利用（参考01背包）
 
 ## 406. 根据身高重建队列
 

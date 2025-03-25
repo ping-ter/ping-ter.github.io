@@ -72,6 +72,52 @@ Your runtime beats 4.99 % of cpp submissions
 ```
 
 就是时间比较难看
+尝试动态规划解决
+
+```c++
+class Solution
+{
+    int dp[24][2048] = {0};
+    inline int trans(int x)
+    {
+        return x + 1024;
+    }
+
+public:
+    int findTargetSumWays(vector<int> &nums, int target)
+    {
+        int n = nums.size();
+        int sum = 0;
+        for (const int &i : nums)
+        {
+            sum += i;
+        }
+        if (sum < abs(target))
+        {
+            return 0;
+        }
+        dp[0][trans(0)] = 1;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = -sum; j <= sum; j++)
+            {
+                if (abs(j - nums[i]) <= sum)
+                {
+                    dp[i + 1][trans(j)] += dp[i][trans(j - nums[i])];
+                }
+                if (abs(j + nums[i]) <= sum)
+                {
+                    dp[i + 1][trans(j)] += dp[i][trans(j + nums[i])];
+                }
+            }
+        }
+        cout << dp[n][trans(target)];
+        return dp[n][trans(target)];
+    }
+};
+```
+
+稍微要注意一下边界检查，因为绝对值大于sum部分的计算是没有任何意义的。
 
 ## 461.汉明距离
 
