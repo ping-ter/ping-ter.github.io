@@ -291,4 +291,43 @@ public:
 偷看评论区发现可以在相遇后再使用双指针来确定
 [参考评论](https://leetcode.cn/problems/linked-list-cycle-ii/description/comments/2982279/)
 
-首先，快慢指针相遇时，一定满足快指针走的跳数是慢指针两倍
+把链表起点到环入口距离记为$a$, 相遇时，慢指针在环内走过的距离为$b$，环总长度为$c$ 
+首先，快慢指针相遇时，一定满足快指针走的跳数是慢指针两倍 
+那么慢指针走过：$a+b$,快指针走过$a+nc$,而$2(a+b)=a+nc$，所以$nc=a+b$
+也就是说，从如果相遇后再设置一个指针，那指针走$a$时，慢指针正好走到$nc$，他们在入口相遇。
+
+```c++
+class Solution
+{
+public:
+    ListNode *detectCycle(ListNode *head)
+    {
+        ListNode *p1 = head;
+        ListNode *p2 = head;
+        while (p2)
+        {
+            p1 = p1->next;
+            p2 = p2->next;
+            if (p2)
+            {
+                p2 = p2->next;
+            }
+            if (p1 == p2)
+            {
+                break;
+            }
+        }
+        if (!p2)
+        {
+            return nullptr;
+        }
+        ListNode *t1 = head, *t2  = p1;
+        while (t1 != t2)
+        {
+            t1 = t1->next;
+            t2 = t2->next;
+        }
+        return t1;
+    }
+};
+```

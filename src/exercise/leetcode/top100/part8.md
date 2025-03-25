@@ -214,4 +214,54 @@ public:
 
 ## 437. 路径总和 III
 
-这题跟`494.目标和`有点像，但是要难得多，如果直接搜索复杂度会很高，
+这题跟`494.目标和`有点像，但是要难得多，如果直接搜索复杂度会很高。
+路径必须向下，不会跨越两颗子树，可以先根遍历，同时由于中间不会有空的节点，所以其实是在前缀和中找能相等的目标和。关键是怎么存找前缀和，哈希表的话，由于是前缀和的头部在变动，需要频繁删除和插入，先用链表试试.
+
+结果发现简单的回溯就能过：
+
+```c++
+class Solution
+{
+#define ll long long
+    int cnt = 0;
+    list<ll> now;
+    ll target;
+    void order(TreeNode *root)
+    {
+        if (root == nullptr)
+        {
+            return;
+        }
+        for (ll &i : now)
+        {
+            i += root->val;
+            if (i == target)
+            {
+                cnt++;
+            }
+        }
+        now.push_back(root->val);
+        if (root->val == target)
+        {
+            cnt++;
+        }
+        order(root->left);
+        order(root->right);
+        now.pop_back();
+        for (ll &i : now)
+        {
+            i -= root->val;
+        }
+    }
+
+public:
+    int pathSum(TreeNode *root, int targetSum)
+    {
+        target = targetSum;
+        order(root);
+        return cnt;
+    }
+};
+```
+
+值得注意的是，这题中间结果会超int范围，需要开ll的链表
