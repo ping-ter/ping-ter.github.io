@@ -261,6 +261,81 @@ public:
 
 没限制空间复杂度，可以用哈希表。哈希表存完频次再topk
 
+```c++
+class Solution
+{
+    unordered_map<int, int> m;
+    vector<int> ans;
+    void partition(int l, int r, int k)
+    {
+        if (r - l + 1 <= k)
+        {
+            return;
+        }
+        int pivot = rand() % (r - l + 1) + l;
+        swap(ans[pivot], ans[l]);
+        int mid = m[ans[l]];
+        int i = l;
+        int lt = l;
+        int gt = r + 1;
+        while (i < gt)
+        {
+            if (m[ans[i]] < mid)
+            {
+                swap(ans[i], ans[lt]);
+                lt++;
+                i++;
+            }
+            else if (m[ans[i]] > mid)
+            {
+                gt--;
+                swap(ans[i], ans[gt]);
+            }
+            else
+            {
+                i++;
+            }
+        }
+        int gt_k = r - gt + 1;
+        if (gt_k > k)
+        {
+            partition(gt, r, k);
+            return;
+        }
+        else if (gt_k == k)
+        {
+            return;
+        }
+        k -= gt_k;
+        int mid_k = gt - lt;
+        if (mid_k >= k)
+        {
+            return;
+        }
+        partition(l, lt - 1, k - mid_k);
+    }
+
+public:
+    vector<int> topKFrequent(vector<int> &nums, int k)
+    {
+        for (const int &i : nums)
+        {
+            if (m.find(i) == m.end())
+            {
+                m.insert(make_pair(i, 1));
+                ans.push_back(i);
+            }
+            else
+            {
+                m[i]++;
+            }
+        }
+        partition(0, ans.size() - 1, k);
+        return vector<int>(ans.begin() + (ans.size() - k), ans.end());
+    }
+};
+```
+
 ## 338.比特位计数
 
 可以递推

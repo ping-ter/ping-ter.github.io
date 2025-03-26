@@ -94,8 +94,196 @@ public:
 一方面可以加一个哈希表，如果遇到字符集不同的可以直接判false；但是更本质的问题是词典的词有包含关系，`aaa`以及更长的`aaa...`都可以用`a`来表示,因此更长的aaa都是不必存在的。可以插入串时检查，如果能用其他字符串表示，就不插入到字典树，检查方法实际上就是之前的dfs。
 然后就被下一个测试用例卡住了。看来要尝试别的思路。
 还有一个可以剪枝的地方就是，如果确定某个长度能表示，那么不用关心他是怎么表示出来的，因为单词使用次数没限制。所以如果确定某个st不可以，那么再遇到相同st就没必要再dfs了，可以用一个数组来记录。
+
+```c++
+class Solution
+{
+
+    inline static int trans(const char a)
+    {
+        return a - 'a';
+    }
+    struct TrieTree
+    {
+        struct node
+        {
+            string *word;
+            node *next[26];
+            node() : word(nullptr)
+            {
+                fill(next, next + 26, nullptr);
+            }
+        };
+        node *root;
+
+        TrieTree()
+        {
+            root = new node();
+        }
+        void insert(const string &word)
+        {
+            node *p = root;
+            for (const char &i : word)
+            {
+                int idx = trans(i);
+                if (p->next[idx] == nullptr)
+                {
+                    p->next[idx] = new node;
+                }
+                p = p->next[idx];
+            }
+            p->word = new string(word);
+        }
+    };
+    TrieTree *trie;
+    vector<int> *st_map;
+    // int n;
+    bool dfs(const string &s, int st, int n)
+    {
+        if (st == n)
+        {
+            return true;
+        }
+        if ((*st_map)[st])
+        {
+            return false;
+        }
+        auto p = trie->root;
+        int result = false;
+        for (int i = st; i < n && !result; i++)
+        {
+            if (p->next[trans(s[i])])
+            {
+                p = p->next[trans(s[i])];
+                if (p->word)
+                {
+                    result = result | dfs(s, i + 1, n);
+                    if (result == false)
+                    {
+                        (*st_map)[i + 1] = false;
+                    }
+                }
+            }
+            else
+            {
+                result = false;
+                break;
+            }
+        }
+        if (result == false)
+        {
+            (*st_map)[st] = false;
+        }
+        return result;
+    }
+
+public:
+    bool wordBreak(string s, vector<string> &wordDict)
+    {
+        trie = new TrieTree;
+        st_map = new vector<int>(1001, 0);
+        for (auto &i : wordDict)
+        {
+            if (!dfs(i, 0, i.size()))
+            {
+                trie->insert(i);
+            } // 确保不能用其他的串表示
+        }
+        return dfs(s, 0, s.size());
+    }
+};
+```
+
 修改之后在上个用例还是会超时
-还有一个可以节省时间的点就是，我们确定了(i,j)可以组成单词之后，后面回溯再进入别的分支后又重新计算了(i,j)
+还有一个浪费时间的点就是，我们确定了(i,j)可以组成单词之后，后面回溯再进入别的分支后又重新计算了(i,j)
+
+考虑动态规划的解法：
+s能不能被字典中的组成，可以转化成s[0:j]可以被组成，且s[j:n]在词典中。按照这个思路可以动态规划。不过这样是倒着找的，所以要倒着遍历
+
+```c++
+class Solution
+{
+
+    inline static int trans(const char a)
+    {
+        return a - 'a';
+    }
+    struct TrieTree
+    {
+        struct node
+        {
+            string *word;
+            node *next[26];
+            node() : word(nullptr)
+            {
+                fill(next, next + 26, nullptr);
+            }
+        };
+        node *root;
+
+        TrieTree()
+        {
+            root = new node();
+        }
+        void insert(const string &word)
+        {
+            node *p = root;
+            for (const char &i : word)
+            {
+                int idx = trans(i);
+                if (p->next[idx] == nullptr)
+                {
+                    p->next[idx] = new node;
+                }
+                p = p->next[idx];
+            }
+            p->word = new string(word);
+        }
+    };
+    TrieTree *trie;
+    bool dp[400];
+
+public:
+    bool wordBreak(string s, vector<string> &wordDict)
+    {
+        trie = new TrieTree;
+        for (auto &i : wordDict)
+        {
+
+            trie->insert(i);
+        }
+        int n = s.size();
+        fill(dp, dp + n, false);
+        dp[n] = true;
+        for (int i = n - 1; i >= 0; i--)
+        {
+            auto p = trie->root;
+            int j = i;
+            while (j < n)
+            {
+                p = p->next[trans(s[j])];
+                if (!p)
+                {
+                    break;
+                }
+                if (p->word)
+                {
+                    dp[i] |= dp[j + 1];
+                }
+                if (dp[i])
+                {
+                    break;
+                }
+                j++;
+            }
+        }
+
+        return dp[0];
+    }
+};
+```
+
+成功AC
 
 ## 647.回文子串
 
