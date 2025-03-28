@@ -1,4 +1,4 @@
-# 热门100题part9（416. 分割等和子集 406. 根据身高重建队列 339.除法求值 394.字符串解码 347.前K个高频元素 338.比特位计数）
+# 热门100题part9（416.分割等和子集 406.根据身高重建队列 339.除法求值 394.字符串解码 347.前K个高频元素 338.比特位计数）
 
 ## 416. 分割等和子集
 
@@ -96,12 +96,58 @@ public:
 
 没想出思路，甚至看完tag都不会。
 
-排在最前面的元素$k_i$一定为0，因为前面没有其他人，同时，他应该是k=0里最矮的，否则后面的元素就违背k=0了；k越大的元素应该越靠后
+排在最前面的元素$k_i$一定为0，因为前面没有其他人，同时，他应该是k=0里最矮的，否则后面的元素就违背k=0了；k越大的元素应该越靠后。此外，k不受比自己身高矮的人的影响，也就是说可以先排高的，矮的按k值插队。
 people = [[7,0],[4,4],[5,0],[6,1],[5,2],[7,1]]
 [5,0],[7,0],[5,2],[6,1],[4,4],[7,1],
 
 ```c++
+class Solution
+{
+    struct node
+    {
+        node *next;
+        vector<int> *p;
+    };
 
+public:
+    vector<vector<int>> reconstructQueue(vector<vector<int>> &people)
+    {
+        sort(people.begin(), people.end(),
+             [](const vector<int> &a, const vector<int> &b)
+             {
+                 if (a[0] != b[0])
+                 {
+                     return a[0] > b[0];
+                 }
+                 return a[1] < b[1];
+             });
+        node *head = new node({nullptr, nullptr});
+        for (vector<int> &now : people)
+        {
+            node *p = head;
+            int cnt = 0;
+            while (p->next != nullptr && cnt < now[1])
+            {
+                p = p->next;
+                if ((*(p->p))[0] >= now[0])
+                {
+                    cnt++;
+                }
+            }
+            auto nownode = new node({p->next, &now});
+            p->next = nownode;
+        }
+        vector<vector<int>> ans;
+        node *p = head;
+        while (p->next != nullptr)
+        {
+            p = p->next;
+            ans.push_back(*(p->p));
+        }
+
+        return ans;
+    }
+};
 ```
 
 ## 399. 除法求值
