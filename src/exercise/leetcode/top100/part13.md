@@ -34,7 +34,40 @@ public:
 
 目标和动态规划。但是看了一眼数据范围有可能扛不住，先试一下.
 根本过不了编译。
-那就只能想办法回溯了，
+那就只能想办法回溯了.
+突然注意到：子数组是数组中元素的连续非空序列，所以不是子集和问题，而是滑动窗口。使用前缀和即可。
+
+```c++
+class Solution
+{
+    int sums[20004];
+public:
+    int subarraySum(vector<int> &nums, int k)
+    {
+        int n = nums.size();
+        sums[0] = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            sums[i] = nums[i - 1] + sums[i - 1];
+        }
+        int cnt = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                if (sums[i] - sums[j] == k)
+                {
+                    cnt++;
+                }
+            }
+        }
+        return cnt;
+    }
+};
+```
+
+从时间看（超过10%），应该还是又很大优化空间的
+判断条件`sums[i] - sums[j] == k`相当于`sums[j] == sums[i] - k`
 
 ## 19.删除链表的倒数第N个结点
 
