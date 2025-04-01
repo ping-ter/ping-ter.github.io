@@ -5,7 +5,6 @@
  * [3] 无重复字符的最长子串
  */
 
-
 // @lcpr-template-start
 using namespace std;
 #include <algorithm>
@@ -24,16 +23,44 @@ using namespace std;
 #include <utility>
 #include <vector>
 // @lcpr-template-end
+
 // @lc code=start
-class Solution {
+class Solution
+{
 public:
-    int lengthOfLongestSubstring(string s) {
-        
+    int lengthOfLongestSubstring(string s)
+    {
+        unordered_map<char, int> m;
+        int max_len = 0;
+        int pre_len = 0;
+        int n = s.size();
+        for (int i = 0; i < n; i++)
+        {
+            if (m.find(s[i]) == m.end())
+            {
+                m.insert(make_pair(s[i], i));
+                pre_len++;
+            }
+            else if (m[s[i]] < i - pre_len)
+            {
+                m[s[i]] = i;
+                pre_len++;
+            }
+            else
+            {
+                int front = m[s[i]];
+                m[s[i]] = i;
+                pre_len = i - front;
+            }
+            if (pre_len > max_len)
+            {
+                max_len = pre_len;
+            }
+        }
+        return max_len;
     }
 };
 // @lc code=end
-
-
 
 /*
 // @lcpr case=start
@@ -49,4 +76,3 @@ public:
 // @lcpr case=end
 
  */
-
