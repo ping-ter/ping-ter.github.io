@@ -76,3 +76,94 @@ public:
 ## 84.柱状图中最大的矩形
 
 像是动态规划，想想怎么递推
+
+## 15.三数之和
+
+两数之和升级版，但是还要给出方案，由于$-10^5 <= nums[i] <= 10^5$如果把每种两数之和都记录，空间最大会达到$10^{10}$.
+把这个问题拆成`1+2`，先只记录一个数的，然后用$n^2$时间解决问题。另外，还有一个去重的问题，可以在记录一个数时，只考虑第一次出现的下标，这样可以保证一个数的部分不同；但是`2`的部分可以混着1的部分，例如$[0,0,0,0]$中，记录一个0，下标0，然后遍历两两相加的组合，第一次得知下标0,1,2相加是0，第二次知道0,1,3也是
+
+## 10.正则表达式匹配
+
+先从DFS试了下成功过了，只是时间有点难看，然后优化了一下，具体规则就是把模式串中连续的a*以及之类的合并了，减少DFS的深度。
+
+```c++
+class Solution
+{
+    bool ans = false;
+    void dfs(string &s, string &p, int i, int j)
+    {
+        while (!ans && i <= s.size())
+        {
+            if (j >= p.size() && i >= s.size())
+            {
+                ans = true;
+                return;
+            }
+            if (j + 1 < p.size() && p[j + 1] == '*')
+            {
+                j++;
+                continue;
+            }
+            char c = p[j];
+            if (c == '*')
+            {
+                dfs(s, p, i, j + 1);
+                c = p[j - 1];
+                if (c == s[i] || c == '.')
+                {
+                    dfs(s, p, i + 1, j);
+                }
+                return;
+            }
+            else
+            {
+                if (c != s[i] && c != '.')
+                {
+                    return;
+                }
+                i++;
+                j++;
+            }
+        }
+    }
+
+public:
+    bool isMatch(string s, string p)
+    {
+        string pt;
+        char pre_c = 0;
+        bool star = false;
+        int i = 0;
+        int j = 0;
+        p += 'a';
+        while (i < p.size() - 1)
+        {
+            if (p[i + 1] == '*')
+            {
+                if (!(j >= 2 && pt[j - 1] == '*' && (pt[j - 2] == p[i] || pt[j - 2] == '.')))
+                {
+                    pt += p[i];
+                    pt += '*';
+                    j += 2;
+                }
+                i += 2;
+            }
+            else
+            {
+                pt += p[i];
+                i++;
+                j++;
+            }
+        }
+        dfs(s, pt, 0, 0);
+        return ans;
+    }
+};
+```
+
+```
+Your runtime beats 100 % of cpp submissions
+Your memory usage beats 98.36 % of cpp submissions (7.9 MB)
+```
+
+时间空间都达到最优水平。
