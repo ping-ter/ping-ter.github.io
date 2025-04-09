@@ -204,4 +204,48 @@ public:
 
 ## 240.搜索二维矩阵II
 
-二分查找，二维版
+二分查找，二维版。从矩阵中心开始比较，每次缩小成几个矩阵的范围。
+
+```c++
+class Solution
+{
+    int target;
+    bool ans = false;
+    bool searchInner(vector<vector<int>> &matrix, int x1, int y1, int x2, int y2)
+    {
+        if (ans)
+        {
+            return true;
+        }
+        if (x1 > x2 || y1 > y2)
+        {
+            return false;
+        }
+        int x_mid = (x1 + x2) / 2;
+        int y_mid = (y1 + y2) / 2;
+        if (matrix[x_mid][y_mid] == target)
+        {
+            ans = true;
+            return true;
+        }
+        else if (matrix[x_mid][y_mid] > target)
+        {
+            return searchInner(matrix, x1, y1, x_mid - 1, y2) | searchInner(matrix, x_mid, y1, x2, y_mid - 1);
+        }
+        else
+        {
+            return searchInner(matrix, x1, y_mid + 1, x_mid, y2) | searchInner(matrix, x_mid + 1, y1, x2, y2);
+        }
+    }
+
+public:
+    bool searchMatrix(vector<vector<int>> &matrix, int target)
+    {
+        this->target = target;
+        return searchInner(matrix, 0, 0, matrix.size() - 1, matrix[0].size() - 1);
+    }
+};
+```
+
+每次可以减少1/4的搜索空间。
+另一种思路（来自评论区）：可以把矩阵看成二叉搜索树。
