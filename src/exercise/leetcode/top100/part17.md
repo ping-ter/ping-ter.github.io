@@ -125,8 +125,238 @@ public:
 
 ## 32.最长有效括号
 
-动态规划。
+动态规划。用栈进行括号匹配，失配时计算最大匹配长度。
+
+```c++
+class Solution
+{
+public:
+    int longestValidParentheses(string s)
+    {
+        int max_len = 0;
+        int now_len = 0;
+        int l = 0;
+        int n = s.size();
+        for (int i = 0; i < n; i++)
+        {
+            if (s[i] == '(')
+            {
+                l++;
+            }
+            else
+            {
+                if (l > 0)
+                {
+                    l--;
+                    now_len += 2;
+                    max_len = max(max_len, now_len);
+                }
+                else
+                {
+                    l = 0;
+                    now_len = 0;
+                }
+            }
+        }
+        return max_len;
+    }
+};
+```
+
+但是这种思路只能过一半样例，原因是有可能匹配的是两侧的括号，中间还有没匹配的括号，比如`()(()`,因此,还需要根据左括号位置来判断。
+
+参考了一位评论区大佬的做法，把失配位置标记成1，然后寻找最大连续0。
+
+大佬的思路[https://leetcode.cn/problems/longest-valid-parentheses/description/comments/331989/]
+
+```c++
+class Solution
+{
+public:
+    int longestValidParentheses(string s)
+    {
+        int max_len = 0;
+        int now_len = 0;
+        stack<int> sta;
+        int n = s.size();
+        vector<int> m(n, 0);
+        for (int i = 0; i < n; i++)
+        {
+            if (s[i] == '(')
+            {
+                sta.push(i);
+            }
+            else
+            {
+                if (!sta.empty())
+                {
+                    sta.pop();
+                }
+                else
+                {
+                    m[i] = 1;
+                }
+            }
+        }
+        while (!sta.empty())
+        {
+            int now = sta.top();
+            sta.pop();
+            m[now] = 1;
+        }
+        for (int i = 0; i < n; i++)
+        {
+            if (m[i] == 0)
+            {
+                now_len++;
+            }
+            else
+            {
+                max_len = max(now_len, max_len);
+                now_len = 0;
+            }
+        }
+        max_len = max(now_len, max_len);
+        return max_len;
+    }
+};
+```
+
+然后看了一下官方的题解，发现官方的做法也相当好。对于之前提到的`()(()`的情况，只要反着遍历一遍就可以了！
+
+可以实现不使用辅助空间：
+
+```c++
+class Solution
+{
+public:
+    int longestValidParentheses(string s)
+    {
+        int max_len = 0;
+        int now_len = 0;
+        int l = 0;
+        int n = s.size();
+        for (int i = 0; i < n; i++)
+        {
+            if (s[i] == '(')
+            {
+                l++;
+            }
+            else
+            {
+                if (l > 0)
+                {
+                    l--;
+                    now_len += 2;
+                    if (l == 0)
+                    {
+                        max_len = max(max_len, now_len);
+                    }
+                }
+                else
+                {
+                    l = 0;
+                    now_len = 0;
+                }
+            }
+        }
+        l = 0;
+        now_len = 0;
+        for (int i = n - 1; i >= 0; i--)
+        {
+            if (s[i] == ')')
+            {
+                l++;
+            }
+            else
+            {
+                if (l > 0)
+                {
+                    l--;
+                    now_len += 2;
+                    if (l == 0)
+                    {
+                        max_len = max(max_len, now_len);
+                    }
+                }
+                else
+                {
+                    l = 0;
+                    now_len = 0;
+                }
+            }
+        }
+        return max_len;
+    }
+};
+```
 
 ## 33.搜索旋转排序数组
 
+要求时间复杂度为$O(log n)$
+最简单想法：先用$O(log n)$时间找到旋转点，再由这个旋转点正常二分查找。
+可以用最右边的值判断是否处于第二段，因为第一段一定大于第二段。为了方便，二分查找时映射下标，可以避免使用辅助空间。
 
+```c++
+class Solution
+{
+    int n;
+    inline int trans(int idx, int m)
+    {
+        return (idx + m) % n;
+    }
+
+public:
+    int search(vector<int> &nums, int target)
+    {
+        n = nums.size();
+        int m = 0; // 旋转点
+        if (nums[0] > nums[n - 1])
+        {
+            // 需要找旋转点
+            int l = 0;
+            int r = n - 1;
+            while (l <= r)
+            {
+                int mid = (l + r) / 2;
+                if (nums[mid] > nums[n - 1])
+                {
+                    l = mid + 1;
+                }
+                else
+                {
+                    if (nums[mid] < nums[mid - 1])
+                    {
+                        m = mid;
+                        break;
+                    }
+                    else
+                    {
+                        r = mid - 1;
+                    }
+                }
+            }
+        }
+        int l = 0;
+        int r = n - 1;
+        while (l <= r)
+        {
+            int mid = (l + r) / 2;
+            int idx = trans(mid, m);
+            if (nums[idx] == target)
+            {
+                return idx;
+            }
+            if (nums[idx] > target)
+            {
+                r = mid - 1;
+            }
+            else
+            {
+                l = mid + 1;
+            }
+        }
+        return -1;
+    }
+};
+```

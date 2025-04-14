@@ -1,4 +1,4 @@
-# 热门100题part16（538.把二叉搜索树转换为累加树 85.最大矩形 105.从前序与中序遍历序列构造二叉树 84.柱状图中最大的矩形 15.三数之和 10.正则表达式匹配 76.最小覆盖子串）
+# 热门100题part16（538.把二叉搜索树转换为累加树 84.柱状图中最大的矩形 85.最大矩形 105.从前序与中序遍历序列构造二叉树 15.三数之和 10.正则表达式匹配 76.最小覆盖子串）
 
 ## 538.把二叉搜索树转换为累加树
 
@@ -25,6 +25,13 @@ public:
 };
 ```
 
+## 84.柱状图中最大的矩形
+
+感觉像是滑动窗口，求数组的一个区间，要求区间的最小值与区间长度的乘积最大。
+枚举每个柱子作为最小值的情况，对于一个柱子，他参与的最大矩形取决于两边大于等于自己的柱子数量与自己高度的乘积，也就是找到两边第一个小于这个柱子的。
+那么可以维护一个单调递增的栈，来求出每个柱子的邻接且比自己高的柱子数量。
+
+
 ## 85.最大矩形
 
 `221.最大正方形`升级版，那道题使用DP解决，尝试一下这题能不能DP。
@@ -33,6 +40,11 @@ public:
 
 可以看到，大矩形也是可以拆成几个同构的小矩形的，只不过正方形只要记录边长，这个要记录长和宽。
 但是还有个大问题，一个点对应的最大正方形可以唯一，但是长方形可以有好几种形态。
+那换种思路，先纵向，如果有连续的1则合并，得到横向的长方形，然后纵向遍历，合并这些长方形。合并过程就转化成了柱形图求最大矩形的问题了。
+[84. 柱状图中最大的矩形](https://leetcode.cn/problems/largest-rectangle-in-histogram?envType=problem-list-v2&envId=2cktkvj)
+ps：也是个困难题
+
+
 
 ## 105.从前序与中序遍历序列构造二叉树
 
@@ -72,10 +84,6 @@ public:
     }
 };
 ```
-
-## 84.柱状图中最大的矩形
-
-像是动态规划，想想怎么递推
 
 ## 15.三数之和
 
@@ -171,4 +179,106 @@ Your memory usage beats 98.36 % of cpp submissions (7.9 MB)
 ## 76.最小覆盖子串
 
 进阶要求：设计一个$o(m+n)$时间内解决此问题的算法
-与`3.无重复字符的最长子串`有些类似，也可以采用这种思路，记录已有集合中的各个字母下标，出现新的之后舍弃旧的，但是有个难点是t中可能有重复字符
+与`3.无重复字符的最长子串`有些类似，也可以采用这种思路，记录已有集合中的各个字母下标，出现新的之后舍弃旧的，但是有个难点是t中可能有重复字符，那就需要引入队列来存位置；每当所有队列都满时，就测试能否删除先到的字符并且不影响队列全满，来得到最小长度。
+算法中，t串扫描一次，s串每个字符进一次出一次，因此时间复杂度符合$O(m+n)$
+
+```c++
+class Solution
+{
+    struct letter
+    {
+        queue<int> q;
+        int size;
+        letter(int n) : size(n) {}
+        letter() : size(0) {}
+        bool insert(int idx) // 未满->满返回true
+        {
+            q.push(idx);
+            return q.size() == size;
+        }
+    };
+    struct window
+    {
+        unordered_map<char, letter> m;
+        int cnt;
+        deque<char> dq;
+        window(string &t) : cnt(0)
+        {
+            for (const auto &i : t)
+            {
+                if (m.find(i) == m.end())
+                {
+                    m.insert(make_pair(i, letter(0)));
+                }
+                m[i].size++;
+            }
+        }
+        void insert(char c, int idx)
+        {
+            dq.push_back(c);
+            if (m.find(c) == m.end())
+            {
+                return;
+            }
+            if (m[c].insert(idx))
+            {
+                cnt++;
+            }
+        }
+        int minfy()
+        {
+            while (1)
+            {
+                char now = dq.front();
+
+                if (m.find(now) == m.end())
+                {
+                    dq.pop_front();
+                    continue;
+                }
+                if (m[now].q.size() <= m[now].size)
+                {
+                    break;
+                }
+                dq.pop_front();
+                m[now].q.pop();
+            }
+            return dq.size();
+        }
+    };
+
+public:
+    string minWindow(string s, string t)
+    {
+        int m = s.size();
+        int n = t.size();
+        if (m < n)
+        {
+            return "";
+        }
+        int min_len = 0x3f3f3f3f;
+        int min_idx = -1;
+        window win(t);
+        for (int i = 0; i < m; i++)
+        {
+            win.insert(s[i], i);
+            if (win.cnt >= win.m.size())
+            {
+                int len = win.minfy();
+                if (len < min_len)
+                {
+                    min_idx = i;
+                    min_len = len;
+                }
+            }
+        }
+        if (min_idx == -1)
+        {
+            return "";
+        }
+        return s.substr(min_idx - min_len + 1, min_len);
+    }
+};
+```
+
+写完发现不用队列，其实只需要一个计数器就够了。
