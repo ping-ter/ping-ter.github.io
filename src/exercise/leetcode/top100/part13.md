@@ -29,6 +29,39 @@ public:
 
 实现STL里的`next_permutation`，之前的`46.全排列`使用了DFS得到全排列，这次要找下一个排列（下一个字典序更大的排列）。
 要使字典序增大，但是增大幅度最小，那就尽量影响较少的元素，在尽量靠右的位置修改，改成一个尽量小的。
+可以先从最右边开始，如果非递减，则可以修改成更大的字典序，先选择大于当前值的第一个元素，交换，然后排序剩下的部分。
+
+```c++
+class Solution
+{
+public:
+    void nextPermutation(vector<int> &nums)
+    {
+        int n = nums.size();
+        int i = n - 2;
+        for (; i >= 0 && nums[i] >= nums[i + 1]; i--)
+        {
+        }
+        if (i < 0)
+        {
+            reverse(nums.begin(), nums.end());
+        }
+        else
+        {
+            int m = i + 1;
+            for (int j = m + 1; j < n; j++)
+            {
+                if (nums[j] > nums[i] && nums[j] < nums[m])
+                {
+                    m = j;
+                }
+            }
+            swap(nums[i], nums[m]);
+            sort(nums.begin() + i + 1, nums.end());
+        }
+    }
+};
+```
 
 ## 560.和为K的子数组
 

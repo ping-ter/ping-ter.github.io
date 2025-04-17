@@ -31,6 +31,76 @@ public:
 枚举每个柱子作为最小值的情况，对于一个柱子，他参与的最大矩形取决于两边大于等于自己的柱子数量与自己高度的乘积，也就是找到两边第一个小于这个柱子的。
 那么可以维护一个单调递增的栈，来求出每个柱子的邻接且比自己高的柱子数量。
 
+```c++
+class Solution
+{
+public:
+    int largestRectangleArea(vector<int> &heights)
+    {
+        stack<int> s;
+        int n = heights.size();
+        vector<int> dp(n, 1);
+        // 前缀
+        int i = 0;
+        while (i < n)
+        {
+            if (s.empty())
+            {
+                dp[i] += i;
+                s.push(i);
+            }
+            else
+            {
+                int t = s.top();
+                if (heights[t] < heights[i])
+                {
+                    dp[i] += i - t - 1;
+                    s.push(i);
+                }
+                else
+                {
+                    s.pop();
+                    i--;
+                }
+            }
+            i++;
+        }
+        s = stack<int>();
+        i = n - 1;
+        while (i >= 0)
+        {
+            if (s.empty())
+            {
+                dp[i] += n - 1 - i;
+                s.push(i);
+            }
+            else
+            {
+                int t = s.top();
+                if (heights[t] < heights[i])
+                {
+                    dp[i] += t - i - 1;
+                    s.push(i);
+                }
+                else
+                {
+                    s.pop();
+                    i++;
+                }
+            }
+            i--;
+        }
+        int m = 0;
+        for (int i = 0; i < n; i++)
+        {
+            m = max(m, heights[i] * dp[i]);
+        }
+        return m;
+    }
+};
+```
+
+复杂度方面，遍历三次，每个元素最多入栈一次出栈一次，因此是线性复杂度。
 
 ## 85.最大矩形
 
@@ -44,6 +114,103 @@ public:
 [84. 柱状图中最大的矩形](https://leetcode.cn/problems/largest-rectangle-in-histogram?envType=problem-list-v2&envId=2cktkvj)
 ps：也是个困难题
 
+解决后就可以用之前的的方法完成了：
+
+```c++
+class Solution
+{
+    // int dp[204][204];
+    int getMaxRect(vector<int> &line)
+    {
+        stack<int> s;
+        int n = line.size();
+        vector<int> dp(n, 1);
+        // 前缀
+        int i = 0;
+        while (i < n)
+        {
+            if (s.empty())
+            {
+                dp[i] += i;
+                s.push(i);
+            }
+            else
+            {
+                int t = s.top();
+                if (line[t] < line[i])
+                {
+                    dp[i] += i - t - 1;
+                    s.push(i);
+                }
+                else
+                {
+                    s.pop();
+                    i--;
+                }
+            }
+            i++;
+        }
+        s = stack<int>();
+        i = n - 1;
+        while (i >= 0)
+        {
+            if (s.empty())
+            {
+                dp[i] += n - 1 - i;
+                s.push(i);
+            }
+            else
+            {
+                int t = s.top();
+                if (line[t] < line[i])
+                {
+                    dp[i] += t - i - 1;
+                    s.push(i);
+                }
+                else
+                {
+                    s.pop();
+                    i++;
+                }
+            }
+            i--;
+        }
+        int m = 0;
+        for (int i = 0; i < n; i++)
+        {
+            m = max(m, line[i] * dp[i]);
+        }
+        return m;
+    }
+
+public:
+    int maximalRectangle(vector<vector<char>> &matrix)
+    {
+        int r = matrix.size();
+        int c = matrix[0].size();
+        vector<vector<int>> dp(r, vector<int>(c, 0));
+
+        for (int j = 0; j < c; j++)
+        {
+            dp[0][j] = matrix[0][j] - '0';
+            for (int i = 1; i < r; i++)
+            {
+                dp[i][j] = matrix[i][j] - '0';
+                if (dp[i][j])
+                {
+                    dp[i][j] += dp[i - 1][j];
+                }
+            }
+        }
+        int m = 0;
+        for (int i = 0; i < r; i++)
+        {
+            m = max(m, getMaxRect(dp[i]));
+        }
+        return m;
+    }
+};
+```
 
 
 ## 105.从前序与中序遍历序列构造二叉树
