@@ -63,8 +63,36 @@ public:
 ## 287.寻找重复数
 
 要求线性时间，常量空间。
-这题可以抽象成寻找环形链表入口问题，
+这题可以抽象成寻找环形链表入口问题，这题卡住我的地方在于我感觉会有自环的情况。
+但是看了[评论区大佬讲解](https://leetcode.cn/problems/find-the-duplicate-number/solutions/261119/xun-zhao-zhong-fu-shu-by-leetcode-solution/comments/2353645/)就明白了：
+由于数据范围在1~n，所以不会存在0，0的位置不会有自环，此外，如果没有其他位置的数字指向i，那么i位置不会到达，也就是自环没有产生影响。
+然后就是链表找环入口了，参考之前的题目即可。
 
+```c++
+class Solution
+{
+public:
+    int findDuplicate(vector<int> &nums)
+    {
+        int slow = nums[0];
+        int fast = nums[slow];
+
+        while (fast != slow)
+        {
+            slow = nums[slow];
+            fast = nums[fast];
+            fast = nums[fast];
+        }
+        slow = 0;
+        while (fast != slow)
+        {
+            slow = nums[slow];
+            fast = nums[fast];
+        }
+        return fast;
+    }
+};
+```
 
 ## 297.二叉树的序列化与反序列化
 
