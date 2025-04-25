@@ -255,7 +255,58 @@ public:
 ## 15.三数之和
 
 两数之和升级版，但是还要给出方案，由于$-10^5 <= nums[i] <= 10^5$如果把每种两数之和都记录，空间最大会达到$10^{10}$.
-把这个问题拆成`1+2`，先只记录一个数的，然后用$n^2$时间解决问题。另外，还有一个去重的问题，可以在记录一个数时，只考虑第一次出现的下标，这样可以保证一个数的部分不同；但是`2`的部分可以混着1的部分，例如$[0,0,0,0]$中，记录一个0，下标0，然后遍历两两相加的组合，第一次得知下标0,1,2相加是0，第二次知道0,1,3也是
+先排序，然后按顺序记录两数之和，如果前面的两数之和大于后面的数的相反数，那么是不可能相加得到0的，这样就能筛掉相当多了，同时排序也达到了去重的效果。
+
+```c++
+class Solution
+{
+    unordered_map<int, set<pair<int, int>>> m;
+
+public:
+    vector<vector<int>> threeSum(vector<int> &nums)
+    {
+        int n = nums.size();
+        sort(nums.begin(), nums.end());
+        vector<vector<int>> ans;
+        set<vector<int>> toans;
+        if (nums[0] > 0 && nums[n - 1] < 0)
+        {
+            return ans;
+        }
+
+        for (int i = 1; i < n; i++)
+        {
+            if (m.find(-nums[i]) != m.end())
+            {
+                for (auto &p : m[-nums[i]])
+                {
+                    // ans.push_back(vector<int>({p.first, p.second, nums[i]}));
+                    toans.insert({p.first, p.second, nums[i]});
+                }
+            }
+            for (int j = 0; j < i && i != n - 1; j++)
+            {
+                int s = nums[i] + nums[j];
+                if (s > -nums[i + 1])
+                {
+                    break;
+                }
+                if (m.find(s) == m.end())
+                {
+                    m.insert(make_pair(s, set<pair<int, int>>()));
+                }
+                m[s].insert(make_pair(nums[j], nums[i]));
+            }
+        }
+        ans.assign(toans.begin(), toans.end());
+        return ans;
+    }
+};
+```
+
+时间空间只击败了5%。
+
+另一个思路，可以转化成两数之和的问题，参考那个做法，只需要把第三个数字换成target即可。
 
 ## 10.正则表达式匹配
 

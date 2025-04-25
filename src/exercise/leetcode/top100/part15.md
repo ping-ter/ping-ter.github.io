@@ -59,7 +59,10 @@ public:
 
 ## 4.寻找两个正序数组的中位数
 
-题目要求算法的时间复杂度应该为 $O(log(m+n))$，也就是跟一个数组中二分查找的复杂度相同，同时这个是有序数组，考虑二分解决。
+题目要求算法的时间复杂度应该为 $O(log(m+n))$，也就是跟一个数组中二分查找的复杂度相同，同时这个是有序数组，考虑二分解决。然后就没思路了。。。
+[参考的大佬题解](https://leetcode.cn/problems/median-of-two-sorted-arrays/solutions/8999/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-w-2)
+
+这个问题可以转化成topk，寻找第k小的元素，可以用二分法每次排除一半不可能是的。
 
 
 ## 79.单词搜索

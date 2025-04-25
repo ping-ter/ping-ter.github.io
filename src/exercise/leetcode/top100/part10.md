@@ -139,3 +139,118 @@ public:
 
 先贪心思考一下：用栈判断是否匹配，发现右括号失配时，必须删掉一个左括号，那么有多少删法？首先可以删除自己，还有与自己连续的右括号，但是本质是一样的，还有就是可以向前寻找，删掉前面的某个右括号（不会影响匹配）。然后考虑左括号失配怎么删，左括号失配只会在最后发现，因此只能删除最后一个右括号之后的所有左括号。
 
+```c++
+class Solution
+{
+    vector<vector<string>> toans;
+    vector<string> ans;
+    string now_str = "";
+    void dfs(int rank)
+    {
+        if (toans.size() <= rank)
+        {
+            ans.push_back(now_str);
+            return;
+        }
+        for (const string &str : toans[rank])
+        {
+            now_str += str;
+            dfs(rank + 1);
+            now_str = now_str.substr(0, now_str.size() - str.size());
+        }
+    }
+
+public:
+    vector<string> removeInvalidParentheses(string s)
+    {
+        int l = 0;
+
+        stack<int> r; // 右括号下标
+        int n = s.size();
+        int begin = 0;
+        int cnt = -1;
+
+        for (int i = 0; i < n; i++)
+        {
+            if (s[i] == '(')
+            {
+                l++;
+            }
+            else if (s[i] == ')')
+            {
+                if (l > 0)
+                {
+                    l--;
+                    if (s[i - 1] != ')')
+                    {
+                        r.push(i);
+                    }
+                }
+                else
+                {
+                    cnt++;
+                    toans.push_back(vector<string>());
+                    if (r.empty())
+                    {
+                        toans[cnt].push_back("");
+                    }
+                    while (!r.empty())
+                    {
+                        int idx = r.top();
+                        r.pop();
+                        toans[cnt].push_back(s.substr(begin, idx - begin) + s.substr(idx + 1, i - idx));
+                    }
+
+                    begin = i + 1;
+                }
+            }
+        }
+        int split_idx = begin;
+        int r_cnt = cnt;
+        begin = n - 1;
+        // 处理多余的左括号
+        r = stack<int>();
+        for (int i = n - 1; i >= split_idx; i--)
+        {
+            if (s[i] == ')')
+            {
+                l--;
+            }
+            else if (s[i] == '(')
+            {
+                if (l > 0)
+                {
+                    l++;
+                    if (s[i - 1] != '(')
+                    {
+                        r.push(i);
+                    }
+                }
+                else
+                {
+                    cnt++;
+                    toans.push_back(vector<string>());
+                    if (r.empty())
+                    {
+                        toans[cnt].push_back("");
+                    }
+                    while (!r.empty())
+                    {
+                        int idx = r.top();
+                        r.pop();
+                        toans[cnt].push_back(s.substr(begin, idx - begin) + s.substr(idx + 1, i - idx));
+                    }
+
+                    begin = i - 1;
+                }
+            }
+        }
+
+        vector<vector<string>> ans_pre;
+        dfs(0);
+        return ans;
+    }
+};
+```
+
+过于复杂，不好debug，遂放弃，转向BFS
