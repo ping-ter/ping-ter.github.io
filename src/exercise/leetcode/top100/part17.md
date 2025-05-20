@@ -46,7 +46,77 @@ public:
 
 ## 621.任务调度器
 
-先贪心，尽量各个任务交替，发现并不能AC
+先贪心，尽量各个任务交替，发现并不能AC。
+搁置了一段时间，本题正确的思路应该是优先给剩余次数最多的任务调度，要实现这个思路，要准备一个优先队列，还有一个等待队列，等待队列的任务就绪后插入到优先队列。
+
+```c++
+class Solution
+{
+    struct task
+    {
+        int remain;
+        int nextTime;
+    };
+    struct CompareTime
+    {
+        bool operator()(const task &a, const task &b)
+        {
+            return a.nextTime > b.nextTime;
+        }
+    };
+    struct CompareRemain
+    {
+        bool operator()(const task &a, const task &b)
+        {
+            return a.remain < b.remain;
+        }
+    };
+    priority_queue<task, vector<task>, CompareRemain> pq_todo;
+    priority_queue<task, vector<task>, CompareTime> pq_wait;
+
+public:
+    int leastInterval(vector<char> &tasks, int n)
+    {
+        vector<int> task_nums(26, 0);
+        for (auto &i : tasks)
+        {
+            task_nums[i - 'A']++;
+        }
+        for (int i = 0; i < 26; i++)
+        {
+            if (task_nums[i] == 0)
+            {
+                continue;
+            }
+            pq_todo.push({task_nums[i], 0});
+        }
+        int t = 0;
+        while (!pq_todo.empty() || !pq_wait.empty())
+        {
+            t++;
+            while (!pq_wait.empty() && pq_wait.top().nextTime <= t)
+            {
+                auto nowTask = pq_wait.top();
+                pq_wait.pop();
+                pq_todo.push({nowTask.remain, nowTask.nextTime});
+            }
+            if (pq_todo.empty())
+            {
+                continue;
+            }
+            auto nowTask = pq_todo.top();
+            pq_todo.pop();
+            if (nowTask.remain > 1)
+            {
+                pq_wait.push({nowTask.remain - 1, t + n + 1});
+            }
+        }
+        return t;
+    }
+};
+```
+
+可以AC，但是这种模拟的过程还是比较慢的，应该能直接算出来结果
 
 ## 581.最短无序连续子数组
 
